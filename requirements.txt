@@ -10,3 +10,5 @@ Flask-WTF==1.2.2           # For forms
 python-dotenv==1.1.0       # To load env vars in dev
 SQLAlchemy==2.0.40         # Core SQL support
 WTForms==3.2.1             # Required by Flask-WTF
+bcrypt==4.1.2
+
