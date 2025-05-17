@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="box mt-5">
+        <h2 class="title is-4 has-text-centered mb-5">Vote: {{ category.name }}</h2>
+        <form method="POST">
+            <div class="columns is-multiline">
+                {% for aspirant in aspirants %}
+                    <div class="column is-6">
+                        <label class="box has-text-centered is-clickable" for="aspirant-{{ aspirant.id }}">
+                            {% if aspirant.profile_picture %}
+                                <figure class="image is-128x128 is-inline-block mb-2">
+                                    <img class="is-rounded" src="{{ url_for('static', filename='uploads/profile_pics/' + aspirant.profile_picture) }}" alt="{{ aspirant.full_name }}">
+                                </figure>
+                            {% endif %}
+                            <h4 class="title is-5">{{ aspirant.full_name }}</h4>
+                            <p class="subtitle is-6">{{ aspirant.political_party }}</p>
+                            <input type="radio" name="aspirant_id" id="aspirant-{{ aspirant.id }}" value="{{ aspirant.id }}" required>
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="field mt-4">
+                <button type="submit" class="button is-link is-fullwidth is-medium">Submit Vote</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

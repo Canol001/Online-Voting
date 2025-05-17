@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-6 mt-10 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6">🗳️ Create Poll</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <!-- Category Name -->
+        <div class="mb-6">
+            <label class="block text-gray-700 font-semibold mb-1">Category Name</label>
+            <input type="text" name="category_name" class="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+
+        <!-- Aspirants Container -->
+        <div id="aspirants">
+            <div class="aspirant bg-gray-50 p-4 mb-4 rounded border border-gray-200">
+                <h4 class="text-lg font-semibold mb-4">👤 Aspirant 1</h4>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-600 mb-1">Full Name</label>
+                    <input type="text" name="aspirant_name" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-600 mb-1">Political Party</label>
+                    <input type="text" name="political_party" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-600 mb-1">Profile Picture</label>
+                    <input type="file" name="profile_picture" class="w-full border rounded px-3 py-2">
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-col sm:flex-row justify-between gap-4 mt-6">
+            <button type="button" onclick="addAspirant()" class="bg-gray-700 text-white px-5 py-2 rounded hover:bg-gray-800 transition">
+                ➕ Add Another Aspirant
+            </button>
+            <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition">
+                ✅ Create Poll
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Dynamic Aspirant Adder -->
+<script>
+function addAspirant() {
+    const container = document.getElementById('aspirants');
+    const count = container.children.length + 1;
+    const div = document.createElement('div');
+    div.className = 'aspirant bg-gray-50 p-4 mb-4 rounded border border-gray-200';
+    div.innerHTML = `
+        <h4 class="text-lg font-semibold mb-4">👤 Aspirant ${count}</h4>
+        <div class="mb-4">
+            <label class="block text-gray-600 mb-1">Full Name</label>
+            <input type="text" name="aspirant_name" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-600 mb-1">Political Party</label>
+            <input type="text" name="political_party" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-600 mb-1">Profile Picture</label>
+            <input type="file" name="profile_picture" class="w-full border rounded px-3 py-2">
+        </div>
+    `;
+    container.appendChild(div);
+}
+</script>
+{% endblock %}

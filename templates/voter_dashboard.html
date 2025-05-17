@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="title is-4 has-text-centered mb-4">Voter Dashboard</h2>
+    <h3 class="subtitle is-5 mb-4">Available Polls</h3>
+    
+    <div class="columns is-multiline">
+        {% for category in categories %}
+            <div class="column is-6">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            {{ category.name }}
+                        </p>
+                    </header>
+                    <div class="card-content">
+                        <div class="content">
+                            <p><strong>Aspirants:</strong> {{ category.aspirants | length }}</p>
+                            {% if category.id in voted_categories %}
+                                <p class="has-text-success mt-2">✅ You have voted</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <footer class="card-footer">
+                        {% if category.id in voted_categories %}
+                            <a href="{{ url_for('results', category_id=category.id) }}" class="card-footer-item has-text-link">View Results</a>
+                        {% else %}
+                            <a href="{{ url_for('vote', category_id=category.id) }}" class="card-footer-item has-background-link has-text-white has-text-weight-bold">Vote Now</a>
+                        {% endif %}
+                    </footer>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

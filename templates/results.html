@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-3xl font-bold text-center mb-10">📊 Results: {{ category.name }}</h2>
+
+    <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% set max_votes = results | max(attribute='votes') %}
+        {% for result in results %}
+            <div class="bg-white rounded-lg shadow-md p-6 text-center border border-gray-200 transition duration-300 hover:shadow-lg relative" data-name="{{ result.name }}">
+                {% if result.profile_picture %}
+                    <img src="{{ url_for('static', filename='uploads/profile_pics/' + result.profile_picture) }}"
+                         alt="{{ result.name }}"
+                         class="w-28 h-28 rounded-full mx-auto mb-4 object-cover border-4 border-gray-300">
+                {% endif %}
+
+                <h4 class="text-xl font-semibold flex items-center justify-center gap-2">
+                    {{ result.name }}
+                    {% if result.votes == max_votes and result.votes > 0 %}
+                        <span class="text-yellow-500 animate-pulse">🏆</span>
+                    {% endif %}
+                </h4>
+                <p class="text-gray-600"><strong>Party:</strong> {{ result.party }}</p>
+                <p class="text-gray-800 mt-2"><strong>Votes:</strong> <span class="vote-count">{{ result.votes }}</span></p>
+
+                <div class="w-full bg-gray-200 rounded-full h-3 mt-4 overflow-hidden">
+                    <div class="vote-bar h-full bg-blue-500 transition-all duration-700 ease-out" style="width: 0%;"></div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+<script>
+const socket = io();
+
+function animateProgressBars(results) {
+    const maxVotes = Math.max(...results.map(r => r.votes));
+
+    results.forEach(result => {
+        const box = document.querySelector(`.relative[data-name="${result.name}"]`) || document.querySelector(`[data-name="${result.name}"]`);
+        if (!box) return;
+
+        // Update vote count
+        const voteCountElem = box.querySelector('.vote-count');
+        voteCountElem.textContent = result.votes;
+
+        // Update progress bar width
+        const percent = maxVotes ? (result.votes / maxVotes) * 100 : 0;
+        const progressBar = box.querySelector('.vote-bar');
+        progressBar.style.width = `${percent}%`;
+
+        // Update 🏆 icon logic
+        const title = box.querySelector('h4');
+        const trophy = title.querySelector('span');
+
+        if (result.votes === maxVotes && maxVotes > 0) {
+            if (!trophy) {
+                const span = document.createElement('span');
+                span.className = 'text-yellow-500 animate-pulse';
+                span.textContent = '🏆';
+                title.appendChild(span);
+            }
+        } else {
+            if (trophy) {
+                title.removeChild(trophy);
+            }
+        }
+    });
+}
+
+socket.on('vote_update', function(data) {
+    if (data.category_id == {{ category.id }}) {
+        animateProgressBars(data.results);
+    }
+});
+</script>
+{% endblock %}
