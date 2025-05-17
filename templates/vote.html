@@ -1,27 +1,32 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
-    <div class="box mt-5">
-        <h2 class="title is-4 has-text-centered mb-5">Vote: {{ category.name }}</h2>
-        <form method="POST">
-            <div class="columns is-multiline">
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="bg-white shadow-xl rounded-xl p-6">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Vote: {{ category.name }}</h2>
+
+        <form method="POST" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {% for aspirant in aspirants %}
-                    <div class="column is-6">
-                        <label class="box has-text-centered is-clickable" for="aspirant-{{ aspirant.id }}">
+                    <div>
+                        <label for="aspirant-{{ aspirant.id }}" class="block bg-gray-100 hover:bg-blue-100 transition cursor-pointer rounded-xl p-4 text-center border border-gray-300">
                             {% if aspirant.profile_picture %}
-                                <figure class="image is-128x128 is-inline-block mb-2">
-                                    <img class="is-rounded" src="{{ url_for('static', filename='uploads/profile_pics/' + aspirant.profile_picture) }}" alt="{{ aspirant.full_name }}">
-                                </figure>
+                                <div class="flex justify-center mb-4">
+                                    <img class="w-24 h-24 rounded-full object-cover" src="{{ url_for('static', filename='uploads/profile_pics/' + aspirant.profile_picture) }}" alt="{{ aspirant.full_name }}">
+                                </div>
                             {% endif %}
-                            <h4 class="title is-5">{{ aspirant.full_name }}</h4>
-                            <p class="subtitle is-6">{{ aspirant.political_party }}</p>
-                            <input type="radio" name="aspirant_id" id="aspirant-{{ aspirant.id }}" value="{{ aspirant.id }}" required>
+                            <h4 class="text-xl font-semibold text-gray-800">{{ aspirant.full_name }}</h4>
+                            <p class="text-sm text-gray-600 mb-3">{{ aspirant.political_party }}</p>
+                            <input type="radio" name="aspirant_id" id="aspirant-{{ aspirant.id }}" value="{{ aspirant.id }}" required class="sr-only peer">
+                            <div class="w-5 h-5 mx-auto mt-2 rounded-full border border-gray-400 peer-checked:border-blue-600 peer-checked:bg-blue-600 transition"></div>
                         </label>
                     </div>
                 {% endfor %}
             </div>
-            <div class="field mt-4">
-                <button type="submit" class="button is-link is-fullwidth is-medium">Submit Vote</button>
+
+            <div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-blue-700 transition">
+                    Submit Vote
+                </button>
             </div>
         </form>
     </div>
