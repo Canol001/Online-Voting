@@ -164,7 +164,30 @@ def get_results(category_id):
             'profile_picture': aspirant.profile_picture
         })
     return results
-
+@app.route('/delete_category/<int:category_id>', methods=['POST'])
+def delete_category(category_id):
+    # Find the category by ID
+    category = Category.query.get_or_404(category_id)
+    
+    try:
+        # Delete associated votes first, then aspirants
+        for aspirant in category.aspirants:
+            # Delete all votes for this aspirant
+            for vote in aspirant.votes:
+                db.session.delete(vote)
+            # Now delete the aspirant
+            db.session.delete(aspirant)
+        
+        # Delete the category
+        db.session.delete(category)
+        db.session.commit()
+        
+        flash('Category deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting category: {str(e)}', 'error')
+    
+    return redirect(url_for('admin_dashboard'))
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')
