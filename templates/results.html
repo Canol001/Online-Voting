@@ -1,29 +1,43 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 py-10">
-    <h2 class="text-3xl font-bold text-center mb-10">📊 Results: {{ category.name }}</h2>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <h2 class="text-3xl font-bold text-center text-teal-800 mb-10">📊 Results: {{ category.name }}</h2>
 
     <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {% set max_votes = results | max(attribute='votes') %}
         {% for result in results %}
-            <div class="bg-white rounded-lg shadow-md p-6 text-center border border-gray-200 transition duration-300 hover:shadow-lg relative" data-name="{{ result.name }}">
+            <div class="border border-teal-200 rounded-lg text-center transition duration-300 relative" data-name="{{ result.name }}">
+                <!-- Profile Picture -->
                 {% if result.profile_picture %}
-                    <img src="{{ url_for('static', filename='uploads/profile_pics/' + result.profile_picture) }}"
-                         alt="{{ result.name }}"
-                         class="w-28 h-28 rounded-full mx-auto mb-4 object-cover border-4 border-gray-300">
+                    <div class="pt-6">
+                        <img src="{{ url_for('static', filename='uploads/profile_pics/' + result.profile_picture) }}"
+                             alt="{{ result.name }}"
+                             class="w-28 h-28 rounded-full mx-auto mb-4 object-cover border-4 border-teal-300">
+                    </div>
                 {% endif %}
 
-                <h4 class="text-xl font-semibold flex items-center justify-center gap-2">
-                    {{ result.name }}
-                    {% if result.votes == max_votes and result.votes > 0 %}
-                        <span class="text-yellow-500 animate-pulse">🏆</span>
-                    {% endif %}
-                </h4>
-                <p class="text-gray-600"><strong>Party:</strong> {{ result.party }}</p>
-                <p class="text-gray-800 mt-2"><strong>Votes:</strong> <span class="vote-count">{{ result.votes }}</span></p>
+                <!-- Candidate Info -->
+                <div class="px-6 py-4">
+                    <h4 class="text-xl font-semibold flex items-center justify-center gap-2 text-teal-800">
+                        {{ result.name }}
+                        {% if result.votes == max_votes.votes and result.votes > 0 %}
+                            <span class="text-orange-500 animate-pulse">🏆</span>
+                        {% endif %}
+                    </h4>
+                    <p class="text-gray-600 mt-2"><strong>Party:</strong> {{ result.party }}</p>
+                    <p class="text-gray-800 mt-2"><strong>Votes:</strong> <span class="vote-count">{{ result.votes }}</span></p>
+                </div>
 
-                <div class="w-full bg-gray-200 rounded-full h-3 mt-4 overflow-hidden">
-                    <div class="vote-bar h-full bg-blue-500 transition-all duration-700 ease-out" style="width: 0%;"></div>
+                <!-- Progress Bar -->
+                <div class="px-6 pb-6">
+                    <div class="w-full bg-teal-100 rounded-full h-3 mt-4 overflow-hidden relative">
+                        <div class="vote-bar h-full transition-all duration-700 ease-out 
+                                    {{ 'bg-teal-600' if result.votes != max_votes.votes else 'bg-orange-500' }}"
+                             style="width: 0%;"
+                             data-votes="{{ result.votes }}"
+                             data-max-votes="{{ max_votes.votes }}">
+                        </div>
+                    </div>
                 </div>
             </div>
         {% endfor %}
@@ -34,8 +48,9 @@
 <script>
 const socket = io();
 
+// Function to animate progress bars
 function animateProgressBars(results) {
-    const maxVotes = Math.max(...results.map(r => r.votes));
+    const maxVotes = Math.max(...results.map(r => r.votes)) || 1; // Avoid division by zero
 
     results.forEach(result => {
         const box = document.querySelector(`.relative[data-name="${result.name}"]`) || document.querySelector(`[data-name="${result.name}"]`);
@@ -50,6 +65,15 @@ function animateProgressBars(results) {
         const progressBar = box.querySelector('.vote-bar');
         progressBar.style.width = `${percent}%`;
 
+        // Update progress bar color based on leading status
+        if (result.votes === maxVotes && maxVotes > 0) {
+            progressBar.classList.remove('bg-teal-600');
+            progressBar.classList.add('bg-orange-500');
+        } else {
+            progressBar.classList.remove('bg-orange-500');
+            progressBar.classList.add('bg-teal-600');
+        }
+
         // Update 🏆 icon logic
         const title = box.querySelector('h4');
         const trophy = title.querySelector('span');
@@ -57,7 +81,7 @@ function animateProgressBars(results) {
         if (result.votes === maxVotes && maxVotes > 0) {
             if (!trophy) {
                 const span = document.createElement('span');
-                span.className = 'text-yellow-500 animate-pulse';
+                span.className = 'text-orange-500 animate-pulse';
                 span.textContent = '🏆';
                 title.appendChild(span);
             }
@@ -69,6 +93,31 @@ function animateProgressBars(results) {
     });
 }
 
+// Function to initialize progress bars on page load
+function initializeProgressBars() {
+    const bars = document.querySelectorAll('.vote-bar');
+    bars.forEach(bar => {
+        const votes = parseInt(bar.getAttribute('data-votes'));
+        const maxVotes = parseInt(bar.getAttribute('data-max-votes')) || 1; // Avoid division by zero
+        const percent = maxVotes ? (votes / maxVotes) * 100 : 0;
+        bar.style.width = `${percent}%`;
+
+        // Set initial color based on leading status
+        if (votes === maxVotes && maxVotes > 0) {
+            bar.classList.remove('bg-teal-600');
+            bar.classList.add('bg-orange-500');
+        }
+    });
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const initialResults = {{ results | tojson }};
+    animateProgressBars(initialResults);
+    initializeProgressBars();
+});
+
+// Listen for real-time updates
 socket.on('vote_update', function(data) {
     if (data.category_id == {{ category.id }}) {
         animateProgressBars(data.results);
