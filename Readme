@@ -1,0 +1,20 @@
+Default Login Credentials
+Admin:
+Email: admin@voting.com
+
+Password: admin123
+
+Note: Change the admin password in production for security.
+
+Voter:
+Register a new voter account via the /register page with:
+Full name
+
+Email address
+
+National ID number
+
+Password
+
+Log in with the registered email and password.
+

@@ -19,4 +19,4 @@ voting_app/
 ├── database.py
 ├── models.py
 ├── requirements.txt
-└── README.md
+└── README.md (optional)
