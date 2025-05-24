@@ -120,9 +120,16 @@ Pull requests are welcome! For major changes, open an issue first to discuss wha
 
 ## Login and navigate the system
 
-This project is open-source and available under the [MIT License](LICENSE).
-
 ---
 
 ![image](https://github.com/user-attachments/assets/a8a5ea8d-fe68-45ef-813b-b8b91d8b85e7)
+
+## As an Admin you are able to create polls...
+---
+![image](https://github.com/user-attachments/assets/5fca50ba-0cf2-41c5-87af-ade7c81d23b7)
+
+## ...and delete them.
+---
+![image](https://github.com/user-attachments/assets/a6e8188c-7ac9-458a-bd5f-a25bf0cfb989)
+
 
