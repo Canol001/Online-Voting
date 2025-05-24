@@ -116,3 +116,13 @@ Pull requests are welcome! For major changes, open an issue first to discuss wha
 *https://electravote-4dki.onrender.com/login*
 
 ---
+![image](https://github.com/user-attachments/assets/51b0a4a9-511f-4505-a55d-2627e99bac2a)
+
+## Login and navigate the system
+
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+
+![image](https://github.com/user-attachments/assets/a8a5ea8d-fe68-45ef-813b-b8b91d8b85e7)
+
